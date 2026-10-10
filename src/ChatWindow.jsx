@@ -3,6 +3,10 @@ import { useEffect, useRef, useState } from 'react'
 // Chat panel that pops up when you click a professor. Talks to the FastAPI backend,
 // which runs one PydanticAI agent per professor.
 
+const NO_BACKEND =
+  "This is the published copy of the walkthrough, so there's no professor behind it — the " +
+  'agents only run locally. Clone the repo and start the backend to talk to him.'
+
 const SESSION_ID = (() => {
   try {
     return crypto.randomUUID()
@@ -53,6 +57,17 @@ export default function ChatWindow({ professorId, professorName, subtitle, greet
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ professor_id: professorId, message: text, session_id: SESSION_ID }),
       })
+      // Static hosts disagree about how to refuse a POST: GitHub Pages sends 405 with an HTML
+      // body, Render sends 200 with an empty one. Neither is JSON, and a 200 is just as wrong
+      // as a 405 here, so the content type is what actually decides whether a backend answered.
+      const isJson = (res.headers.get('content-type') || '').includes('application/json')
+      if (!isJson) {
+        throw new Error(
+          res.ok || res.status === 404 || res.status === 405
+            ? NO_BACKEND
+            : "Can't reach the professor backend. If you're running this locally, check that it's up on port 8000.",
+        )
+      }
       if (!res.ok) {
         const body = await res.json().catch(() => ({}))
         throw new Error(body.detail || `Backend returned ${res.status}`)

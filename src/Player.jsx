@@ -35,10 +35,20 @@ export default function Player({ lockRef, mapRef, touchRef, onLock, onWhere }) {
     }
     controls.addEventListener('lock', on)
     controls.addEventListener('unlock', off)
+    // While the cursor is in a text field (the professor chat), keys belong to that field:
+    // don't drive the player, and above all don't preventDefault on Space, which would
+    // silently swallow the spacebar mid-sentence.
+    const typing = (e) => {
+      const el = e.target
+      return !!el && (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA' || el.isContentEditable)
+    }
     const down = (e) => {
+      if (typing(e)) return
       keys.current[e.code] = true
       if (e.code === 'Space') e.preventDefault()
     }
+    // Always clear on keyup, even from a field, so a key pressed outside and released
+    // inside one cannot stay stuck down.
     const up = (e) => (keys.current[e.code] = false)
     const blur = () => (keys.current = {})
     window.addEventListener('keydown', down)
