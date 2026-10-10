@@ -1,11 +1,13 @@
 import { useMemo } from 'react'
 import * as THREE from 'three'
 import Professor, { PROFESSORS } from './Professor.jsx'
+import Zaman, { ZAMAN } from './Zaman.jsx'
 import { DRUMS, LECTERNS } from './layout.js'
 
-// which Hogwarts professor teaches in which classroom (matches the slide decks)
+// which professor teaches in which classroom (matches the slide decks).
+// 2400 is MGT 409, so it is Prof. Zaman's room.
 export const ROOM_PROFESSOR = {
-  2400: 'dumbledore', // MGT 409 AI Foundations for Managers
+  2400: 'zaman', // MGT 409 AI Foundations for Managers
   2410: 'mcgonagall', // MGT 404 Basics of Economics
   2420: 'trelawney', // MGT 403 Probability Modeling & Statistics
   2430: 'slughorn', // MGT 887 Negotiations
@@ -14,6 +16,8 @@ export const ROOM_PROFESSOR = {
   2220: 'moody', // MGT 800 Crisis Management in Tech
   2230: 'flitwick', // MGT 541 Corporate Finance
 }
+
+const NAME_OF = (who) => (who === 'zaman' ? ZAMAN.name : PROFESSORS[who].name)
 
 function plaqueTex(name) {
   const c = document.createElement('canvas')
@@ -33,7 +37,7 @@ function plaqueTex(name) {
   return t
 }
 
-export default function Faculty() {
+export default function Faculty({ talkingTo, onProfFocus, onProfActivate }) {
   const items = useMemo(
     () =>
       DRUMS.map((d, i) => {
@@ -44,7 +48,7 @@ export default function Faculty() {
           who,
           pos: [fc[0] + back[0] * 1.15 - t[0] * half * 0.3, 0, fc[1] + back[1] * 1.15 - t[1] * half * 0.3],
           rot,
-          plaque: { p: [lec.x + back[0] * 0.26, 0.85, lec.z + back[1] * 0.26], rot, mat: new THREE.MeshBasicMaterial({ map: plaqueTex(PROFESSORS[who].name) }) },
+          plaque: { p: [lec.x + back[0] * 0.26, 0.85, lec.z + back[1] * 0.26], rot, mat: new THREE.MeshBasicMaterial({ map: plaqueTex(NAME_OF(who)) }) },
         }
       }),
     [],
@@ -53,7 +57,17 @@ export default function Faculty() {
     <>
       {items.map((it, i) => (
         <group key={i}>
-          <Professor who={it.who} position={it.pos} rotation={it.rot} phase={i * 1.7} />
+          {it.who === 'zaman' ? (
+            <Zaman
+              position={it.pos}
+              rotation={it.rot}
+              talking={talkingTo === 'zaman'}
+              onFocusChange={(on) => onProfFocus?.(on ? 'zaman' : null)}
+              onActivate={() => onProfActivate?.('zaman')}
+            />
+          ) : (
+            <Professor who={it.who} position={it.pos} rotation={it.rot} phase={i * 1.7} />
+          )}
           <mesh position={it.plaque.p} rotation={[0, it.plaque.rot, 0]} material={it.plaque.mat}>
             <planeGeometry args={[0.6, 0.15]} />
           </mesh>

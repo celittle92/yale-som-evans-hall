@@ -27,6 +27,27 @@ npm run dev
 
 Open http://localhost:5173 and click **Click to walk in**.
 
+### The professor agents (backend)
+
+Walk into room 2400 and you can talk to Prof. Zaman. That needs the Python backend running
+alongside Vite — the dev server proxies `/api` to it on port 8000.
+
+```bash
+python3 -m venv backend/.venv
+backend/.venv/bin/python -m pip install -r backend/requirements.txt
+cd backend && .venv/bin/uvicorn main:app --port 8000 --reload
+```
+
+It reads `PORTKEY_API_KEY` from the workspace-root `.env` and the model from `OPENAI_MODEL`
+(default `gpt-6-luna`). `GET /api/health` reports the model name and never a key.
+
+Each professor is a PydanticAI agent. Its system prompt is assembled at runtime from
+`backend/prompts/professor_base.md`, that professor's own persona file in the same folder, and
+their course record read live out of `data/yale_som.db` — no course facts are hard-coded. Every
+agent also gets two tools, `search_catalog` and `course_info`, so it can answer questions about
+any other course by querying the catalog instead of guessing. The database is opened read-only,
+PhD rows are filtered out, and `faculty_1_email` is never selected.
+
 **Keyboard + mouse** (works like a PC shooter):
 
 | Key | Action |
