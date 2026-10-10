@@ -4,7 +4,19 @@ A first-person walk-through of the 2nd floor of Edward P. Evans Hall (Yale Schoo
 
 It includes the blue classroom drums you can walk into, the curvy glass cloister around the courtyard, Ross Library on the west side, the Beinecke Terrace Room and its outdoor terrace on the east side, the small glass meeting rooms, and paintings above the stairwells.
 
-**Walk it in your browser:** https://zlisto.github.io/yale_som_virtual/
+**Walk it in your browser:** https://celittle92.github.io/yale-som-evans-hall/
+
+## Credits
+
+The 3D world — the floor plan, the meshes, the procedural textures, the Labubus, the Hogwarts
+faculty, Handsome Dan — is the work of [@zlisto](https://github.com/zlisto), built for
+MGT 409: AI Foundations for Managers. Original repo:
+[zlisto/yale_som_virtual](https://github.com/zlisto/yale_som_virtual).
+
+This fork is my in-class version for Lecture 4. The only change so far is the interface palette:
+the original's black-and-pink chrome is now a "warm editorial" theme (cream ground, deep ink type,
+a single plum accent) matching the house style I use across my coursework. That lives in
+`src/styles.css` and the `C` palette in `src/Minimap.jsx`; the 3D world is untouched.
 
 ## Run it locally
 
@@ -36,7 +48,7 @@ Open http://localhost:5173 and click **Click to walk in**.
 - `src/textures.js`: procedural canvas textures (carpet, navy drum glass, wood slats, mural, signs, stairwell paintings).
 - `src/Player.jsx`: walking (pointer lock or touch), jump/crouch, circle-vs-wall collision.
 - `src/TouchControls.jsx`: on-screen joystick, drag-to-look, jump and pause buttons.
-- `src/Minimap.jsx`: the black-and-pink map in the corner.
+- `src/Minimap.jsx`: the cream-and-plum floorplan map in the corner.
 - `src/Labubu.jsx`: a customizable Labubu built from primitives: `fur`, `expression` (grin / happy / surprised / sleepy / mischief), `shirt` ('yale', 'stripes', or any color), `pants`, `overalls`, `hat`, `sitting`, `anim`.
 - `src/LabubuParty.jsx`: the crew playing in the courtyard plus Labubus in meetings in every glass room.
 - `src/slides.js`: lecture slides for eight Fall 2026 MBA courses (MGT 409, 404, 403, 887, 402, 538, 800, 541) on the classroom screens and meeting-room monitors.
